@@ -19,6 +19,7 @@ public class WaveManager : MonoBehaviour
     public GameObject doorGameObject;
     public GameObject player_Reference_GO;
     public GameObject turret_GO;
+    public GameObject ParticleSystem_GO;
     float doorLife = 300f;
     float playerLife = 150f;
 
@@ -282,5 +283,12 @@ public class WaveManager : MonoBehaviour
 
     public void QuitGame()
     {   Application.Quit();    }
+
+    public void CreateParticles(Vector3 position)
+    {
+        GameObject GO = Instantiate(ParticleSystem_GO, position, Quaternion.identity);
+        Destroy(GO, 1.9f);
+    }
+
 
 }

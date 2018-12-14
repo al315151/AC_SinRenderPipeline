@@ -70,17 +70,17 @@ public class EnemyBehaviour : MonoBehaviour
                     targetInRange = false;
                     //enemyNavAgent.isStopped = false;
                 }
-                //if (ObjectiveInSight())
-                //{
                 
-                //}
             }
             else // Si soy Melee...
             {
-                if (distance < 7.5f)
+                if (distance < 6.5f)
                 {
                     //KABOOM
                     WaveManager.currentInstance.ReduceLifeFromObjective(objective, this.gameObject);
+                    Vector3 newPos = new Vector3(transform.position.x, transform.position.y + 3.0f,
+                                                  transform.position.z);
+                    WaveManager.currentInstance.CreateParticles(newPos);
                     Destroy(this.gameObject);
                 }
             }
@@ -142,6 +142,9 @@ public class EnemyBehaviour : MonoBehaviour
         //print("current " + gameObject.name + " life: " + currentEnemyLife);
         if (currentEnemyLife <= 0f)
         {
+            Vector3 newPos = new Vector3(transform.position.x, transform.position.y + 3.0f,
+                                                  transform.position.z);
+            WaveManager.currentInstance.CreateParticles(newPos);
             Destroy(this.gameObject);
         }
         else
