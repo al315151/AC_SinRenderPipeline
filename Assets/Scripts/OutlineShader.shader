@@ -1,5 +1,5 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
+// Code from: http://wiki.unity3d.com/index.php/Silhouette-Outlined_Diffuse
 Shader "Outlined/Silhouetted Bumped Diffuse" {
 	Properties{
 		_Color("Main Color", Color) = (.5,.5,.5,1)
