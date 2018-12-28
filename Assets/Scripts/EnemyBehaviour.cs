@@ -96,7 +96,7 @@ public class EnemyBehaviour : MonoBehaviour
                                       launchProjectileZone.transform.rotation);
 
         proj.name = gameObject.name + " Missile";
-
+        proj.GetComponent<ProjectileBehaviour>().type = ProjectileType.EnemyProjectile;
         Vector3 playerDirection = (objective.transform.position - transform.position);
         playerDirection.y = 0f;
         playerDirection.Normalize();
@@ -167,7 +167,19 @@ public class EnemyBehaviour : MonoBehaviour
             enemyNavAgent.SetDestination(obj.transform.position);
             objective = obj;
         }
-        print("Nuevo objetivo: " + obj.name);
+
+        if (obj.GetComponent<ProjectileBehaviour>() != null)
+        {
+            if (obj.GetComponent<ProjectileBehaviour>().type == ProjectileType.TurretProjectile)
+            {
+                print("Torreta damaged");
+                enemyNavAgent.SetDestination(obj.GetComponent<ProjectileBehaviour>().father.transform.position);
+                objective = obj.GetComponent<ProjectileBehaviour>().father;
+            }
+        }
+
+
+        print("Nuevo objetivo: " + objective.name);
     }
 
 

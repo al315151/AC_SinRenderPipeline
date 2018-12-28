@@ -134,7 +134,7 @@ public class WaveManager : MonoBehaviour
         {
             objective.GetComponent<EnemyBehaviour>().ReceiveDamage(20f, sender);
         }
-        else if (objective.name == doorGameObject.name && sender.tag != "Player")
+        else if (objective.name == doorGameObject.name && (sender.tag == "Enemy"))
         {
             if (sender.name.Contains("Missile"))
             { doorLife -= 5f; }

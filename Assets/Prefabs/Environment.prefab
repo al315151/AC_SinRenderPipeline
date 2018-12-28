@@ -4618,14 +4618,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1346335946666758370}
     m_Modifications:
-    - target: {fileID: 1836399806, guid: b828078301e00e942920ef2f6abd5ab5, type: 3}
-      propertyPath: m_Name
-      value: Door
-      objectReference: {fileID: 0}
-    - target: {fileID: 1836399806, guid: b828078301e00e942920ef2f6abd5ab5, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 1836399809, guid: b828078301e00e942920ef2f6abd5ab5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4669,6 +4661,14 @@ PrefabInstance:
     - target: {fileID: 1836399809, guid: b828078301e00e942920ef2f6abd5ab5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1836399806, guid: b828078301e00e942920ef2f6abd5ab5, type: 3}
+      propertyPath: m_Name
+      value: Door
+      objectReference: {fileID: 0}
+    - target: {fileID: 1836399806, guid: b828078301e00e942920ef2f6abd5ab5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1766342324407251217, guid: b828078301e00e942920ef2f6abd5ab5,
         type: 3}

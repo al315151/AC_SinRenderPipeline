@@ -114,7 +114,7 @@ public class CustomFPSMovement : MonoBehaviour
                                       launchProjectileZone.transform.rotation);
 
         proj.name = gameObject.name + " Missile";
-
+        proj.GetComponent<ProjectileBehaviour>().type = ProjectileType.PlayerProjectile;
         proj.GetComponent<Rigidbody>().AddForce(transform.forward * 1500f);
         //Por si acaso, para eitar cosas injustas haremos que desaparezca en 4 seg si no choca con nada.
         Destroy(proj, 4f);

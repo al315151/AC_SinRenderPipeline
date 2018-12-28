@@ -6,7 +6,6 @@ public class TurretBehaviour : MonoBehaviour
 {
     public GameObject turretHead;
 
-
     [Header("Mechanics Variables")]
     public GameObject projectile;
     public GameObject launchProjectileZone;
@@ -62,6 +61,7 @@ public class TurretBehaviour : MonoBehaviour
 
         proj.name = gameObject.name + " Missile";
         proj.GetComponent<ProjectileBehaviour>().father = this.gameObject;
+        proj.GetComponent<ProjectileBehaviour>().type = ProjectileType.TurretProjectile;
         Vector3 playerDirection = (objectiveScript.transform.position - transform.position);
         playerDirection.y = 0f;
         playerDirection.Normalize();
