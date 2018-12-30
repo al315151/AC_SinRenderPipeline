@@ -173,8 +173,11 @@ public class EnemyBehaviour : MonoBehaviour
             if (obj.GetComponent<ProjectileBehaviour>().type == ProjectileType.TurretProjectile)
             {
                 print("Torreta damaged");
-                enemyNavAgent.SetDestination(obj.GetComponent<ProjectileBehaviour>().father.transform.position);
-                objective = obj.GetComponent<ProjectileBehaviour>().father;
+                if (obj.GetComponent<ProjectileBehaviour>().father != null)
+                {
+                    enemyNavAgent.SetDestination(obj.GetComponent<ProjectileBehaviour>().father.transform.position);
+                    objective = obj.GetComponent<ProjectileBehaviour>().father;
+                }
             }
         }
 

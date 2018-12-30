@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TurretBehaviour : MonoBehaviour
 {
     public GameObject turretHead;
+    public Canvas healthBarCanvas;
+    public Slider healthBarSlider;
+    public Image healthBarFillImage;
 
     [Header("Mechanics Variables")]
     public GameObject projectile;
@@ -25,6 +29,20 @@ public class TurretBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (WaveManager.currentInstance.gameStarted && 
+            healthBarCanvas.worldCamera == null)
+        {
+            healthBarCanvas.worldCamera = 
+            WaveManager.currentInstance.player_Reference_GO.GetComponent<Camera>();
+            healthBarSlider.maxValue = turretLife;
+            healthBarSlider.value = turretLife;
+        }
+
+        
+        UpdateHealthBar();
+
+
+
         timerShoot += Time.deltaTime;
 
         if (timerShoot > 0.5f)
@@ -95,6 +113,22 @@ public class TurretBehaviour : MonoBehaviour
         }
 
     }
+
+    void UpdateHealthBar()
+    {
+        healthBarCanvas.gameObject.transform.LookAt(WaveManager.currentInstance.player_Reference_GO.transform.position);
+        healthBarSlider.value = turretLife;
+
+        //Update turret life slider color
+        if(healthBarSlider.value < healthBarSlider.maxValue * 0.3)
+        {   healthBarFillImage.color = new Color(0.8f, 0.0f, 0.0f, 0.5f);       }
+        else if (healthBarSlider.value < healthBarSlider.maxValue * 0.65f)
+        {   healthBarFillImage.color = new Color(0.9f, 0.82f, 0.01f, 0.5f);     }
+        else { healthBarFillImage.color = new Color(0.0f, 0.8f, 0.0f, 0.5f); }
+
+
+    }
+
 
 
 

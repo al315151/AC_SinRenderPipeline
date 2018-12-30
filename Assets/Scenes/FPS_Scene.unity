@@ -269,16 +269,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Torretav2
       objectReference: {fileID: 0}
-    - target: {fileID: 42436807995106545, guid: 8860f45255236d14eaf1051904d34361,
-        type: 3}
-      propertyPath: m_Layer
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 42436807995106545, guid: 8860f45255236d14eaf1051904d34361,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 42436807995209937, guid: 8860f45255236d14eaf1051904d34361,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -333,31 +323,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405305068613992805, guid: 8860f45255236d14eaf1051904d34361,
-        type: 3}
-      propertyPath: m_Layer
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405305068613992801, guid: 8860f45255236d14eaf1051904d34361,
-        type: 3}
-      propertyPath: m_Layer
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2405305068613992803, guid: 8860f45255236d14eaf1051904d34361,
-        type: 3}
-      propertyPath: m_Layer
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1499918218512650627, guid: 8860f45255236d14eaf1051904d34361,
-        type: 3}
-      propertyPath: m_Layer
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8158521830855209937, guid: 8860f45255236d14eaf1051904d34361,
-        type: 3}
-      propertyPath: m_Layer
-      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8860f45255236d14eaf1051904d34361, type: 3}
