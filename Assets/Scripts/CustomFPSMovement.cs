@@ -17,6 +17,12 @@ public class CustomFPSMovement : MonoBehaviour
     public GameObject launchProjectileZone;
     public GameObject projectile;
 
+    //SHooting Cooldown behaviour
+    float timerShoot = 0.0f;
+    float shootCoolDown = 0.2f;
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +40,8 @@ public class CustomFPSMovement : MonoBehaviour
     {
         if (WaveManager.currentInstance.gameStarted)
         {
+            timerShoot += Time.deltaTime;
+
             if (Input.GetKey(KeyCode.LeftShift))
             {
                 //El doble de lo normal.
@@ -44,11 +52,8 @@ public class CustomFPSMovement : MonoBehaviour
             PlayerMovement();
             PlayerRotation();
 
-            if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.E) == false)
-            {
-                ShootAtObjective();
-            }
-            else if (Input.GetKey(KeyCode.E))
+            ShootingBehaviour();
+            if (Input.GetKey(KeyCode.E))
             {
                 WaveManager.currentInstance.turret_GO.SetActive(true);
                 RaycastHit hit;
@@ -59,14 +64,18 @@ public class CustomFPSMovement : MonoBehaviour
                     WaveManager.currentInstance.turret_GO.transform.position = hit.point;
                 }
             }
-            else if (Input.GetKeyUp(KeyCode.E) && WaveManager.currentInstance.availableTurrets > 0)
+            else if (Input.GetKeyUp(KeyCode.E))
             {
-                GameObject newTurret = Instantiate(WaveManager.currentInstance.turret_GO,
-                                                    WaveManager.currentInstance.turret_GO.transform.position,
-                                                    WaveManager.currentInstance.turret_GO.transform.rotation);
+                if (WaveManager.currentInstance.availableTurrets > 0)
+                {
+                    GameObject newTurret = Instantiate(WaveManager.currentInstance.turret_GO,
+                                                        WaveManager.currentInstance.turret_GO.transform.position,
+                                                        WaveManager.currentInstance.turret_GO.transform.rotation);
+                    WaveManager.currentInstance.availableTurrets--;
+                    WaveManager.currentInstance.UpdateAvailableTurretsText();
+                    newTurret.GetComponent<TurretBehaviour>().ShutOnTurret();
+                }
                 WaveManager.currentInstance.turret_GO.SetActive(false);
-                WaveManager.currentInstance.availableTurrets--;
-                WaveManager.currentInstance.UpdateAvailableTurretsText();
             }
         }
     }
@@ -118,6 +127,18 @@ public class CustomFPSMovement : MonoBehaviour
         proj.GetComponent<Rigidbody>().AddForce(transform.forward * 1500f);
         //Por si acaso, para eitar cosas injustas haremos que desaparezca en 4 seg si no choca con nada.
         Destroy(proj, 4f);
+    }
+
+    void ShootingBehaviour()
+    {
+        if ((Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)) && Input.GetKey(KeyCode.E) == false)
+        {
+            if (timerShoot > shootCoolDown)
+            {
+                ShootAtObjective();
+                timerShoot = 0.0f;
+            }
+        }
     }
 
 

@@ -19,11 +19,15 @@ public class TurretBehaviour : MonoBehaviour
     public float turretLife;
 
     float timerShoot = 0.0f;
-    
+
+
+    bool turretActivated = false;
+
     // Start is called before the first frame update
     void Start()
     {
         turretLife = 300f;
+        
     }
 
     // Update is called once per frame
@@ -38,28 +42,27 @@ public class TurretBehaviour : MonoBehaviour
             healthBarSlider.value = turretLife;
         }
 
-        
-        UpdateHealthBar();
-
-
-
-        timerShoot += Time.deltaTime;
-
-        if (timerShoot > 0.5f)
+        if(turretActivated)
         {
-            SearchForEnemy();
-            if (objective != null)
-            {
-                turretHead.transform.LookAt(objective.transform.position);
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position, turretHead.transform.forward, out hit))
-                {                    
-                    timerShoot = 0.0f;
-                    ShootAtObjective();   
-                }
-            }                
-        }
+            
+            UpdateHealthBar();
+            timerShoot += Time.deltaTime;
 
+            if (timerShoot > 0.5f)
+            {
+                SearchForEnemy();
+                if (objective != null)
+                {
+                    turretHead.transform.LookAt(objective.transform.position);
+                    RaycastHit hit;
+                    if (Physics.Raycast(transform.position, turretHead.transform.forward, out hit))
+                    {
+                        timerShoot = 0.0f;
+                        ShootAtObjective();
+                    }
+                }
+            }
+        }
     }
 
     public void ReceiveDamage(float damage)
@@ -69,7 +72,6 @@ public class TurretBehaviour : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-
     }
 
     void ShootAtObjective()
@@ -88,9 +90,6 @@ public class TurretBehaviour : MonoBehaviour
         //Por si acaso, para eitar cosas injustas haremos que desaparezca en 5 seg si no choca con nada.
         Destroy(proj, 5f);
     }
-
-
-
 
 
     void SearchForEnemy()
@@ -121,16 +120,20 @@ public class TurretBehaviour : MonoBehaviour
 
         //Update turret life slider color
         if(healthBarSlider.value < healthBarSlider.maxValue * 0.3)
-        {   healthBarFillImage.color = new Color(0.8f, 0.0f, 0.0f, 0.5f);       }
+        {   healthBarFillImage.color = new Color(0.8f, 0.0f, 0.0f, 0.3f);       }
         else if (healthBarSlider.value < healthBarSlider.maxValue * 0.65f)
-        {   healthBarFillImage.color = new Color(0.9f, 0.82f, 0.01f, 0.5f);     }
-        else { healthBarFillImage.color = new Color(0.0f, 0.8f, 0.0f, 0.5f); }
-
-
+        {   healthBarFillImage.color = new Color(0.9f, 0.82f, 0.01f, 0.3f);     }
+        else { healthBarFillImage.color = new Color(0.0f, 0.8f, 0.0f, 0.3f); }
     }
 
+    public void ShutOffTurret()
+    {
+        turretActivated = false;
+    }
 
-
-
-
+    public void ShutOnTurret()
+    {
+        turretActivated = true;
+    }
+          
 }
