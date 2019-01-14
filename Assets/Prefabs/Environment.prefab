@@ -2299,8 +2299,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyTypes:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 89, guid: a1cbfeadd459d1c4fb22242c4f45432e, type: 3}
+  - {fileID: 106, guid: 71b573cc6ad1c8d4085d5e4529dcd472, type: 3}
   currentWaveEnemies: []
   doorGameObject: {fileID: 5549150330004900324}
   player_Reference_GO: {fileID: 0}
@@ -4348,7 +4348,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1672549704626368250
 Transform:
   m_ObjectHideFlags: 0
