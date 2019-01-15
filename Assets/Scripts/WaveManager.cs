@@ -17,6 +17,18 @@ public class WaveManager : MonoBehaviour
 
     [Header("Environment & player variables")]
     public GameObject doorGameObject;
+
+    //Estos dos siguientes siempre tendran el mismo tamaño, dado que se trata de que 
+    //cada indice se corresponda.
+    public GameObject[] DoorPositions;
+    public float[] DoorDamageSuccessRatio;
+    //El success ratio aumentará conforme enemigos consigan atacar dicho punto. 
+    //Si el usuario deja atacar mucho un punto, en la siguiente tanda se mandarán más squads a esa zona.
+    // Estos datos se reiniciarán cada ronda.
+
+    public CastleBehaviour[] castles;
+
+
     public GameObject player_Reference_GO;
     public GameObject turret_GO;
     public GameObject ParticleSystem_GO;
@@ -29,6 +41,9 @@ public class WaveManager : MonoBehaviour
     public static WaveManager currentInstance;
     public GameObject[] spawners;
     public Transform enemyPool;
+    public Transform playerBulletPool;
+
+
 
     public int availableTurrets;
 
@@ -85,8 +100,10 @@ public class WaveManager : MonoBehaviour
                 { currentWaveEnemies[i].SetActive(true); }
             }
             //Si no quedan enemigos, pasamos a la siguiente ronda.
+            /**
             if (currentWaveEnemies.Count == 0)
             { ProceedToNextWave(); }
+            //*/
 
             //Spawneamos los enemigos.
             if (whileSpawn)
@@ -268,7 +285,9 @@ public class WaveManager : MonoBehaviour
         UpdateAvailableTurretsText();
 
         currentWave = 0;
-        ProceedToNextWave();
+
+        //Comentado para hacer 
+        //ProceedToNextWave();
 
         doorUIHolder.SetActive(true);
         playerUIHolder.SetActive(true);

@@ -50,17 +50,23 @@ public class SquadBehaviour : MonoBehaviour
         {
             case SquadType.Suicidal:
                 {
-                    numberOfMembers = WaveManager.currentInstance.currentWave * 4;
+                    numberOfMembers = (WaveManager.currentInstance.currentWave + 1) * 4;
                     memberPositions =  new GameObject[numberOfMembers];
                     //Initial positions of squad.
-                    for (int i = 0; i < numberOfMembers; i++)
+                    for (int i = 0; i < numberOfMembers / 2; i++)
                     {
-                        //Ahora, el enemigo melee es el numero 1 en el array de enemyTypes.
-                        memberPositions[i] = Instantiate(enemyTypes[1], transform);
-                        memberPositions[i].transform.position = new Vector3(transform.position.x + i * 2f,
-                                                                            transform.position.y,
-                                                                            transform.position.z + i * 2f);
+                        for (int j = 0; j < numberOfMembers - (numberOfMembers / 2); j++)
+                        {
+                            //Ahora, el enemigo melee es el numero 1 en el array de enemyTypes.
+                            Vector3 memberInitialPosition = new Vector3(transform.position.x + (i * 2f),
+                                                                        transform.position.y,
+                                                                        transform.position.z + (j * 2f));
+                            memberPositions[i+j] = Instantiate(enemyTypes[1], memberInitialPosition, 
+                                                               Quaternion.identity, transform);
+                            memberPositions[i + j].SetActive(true);
 
+
+                        }
                     }
                     print("Squad created");
 

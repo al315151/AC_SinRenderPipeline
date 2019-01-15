@@ -1,12 +1,12 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-// Code from: http://wiki.unity3d.com/index.php/Silhouette-Outlined_Diffuse
-Shader "Outlined/Silhouetted Bumped Diffuse" {
+﻿// Code from: http://wiki.unity3d.com/index.php/Silhouette-Outlined_Diffuse
+
+Shader "Outlined/Projectile Bumped Diffuse" {
 	Properties{
 		_Color("Main Color", Color) = (.5,.5,.5,1)
 		_OutlineColor("Outline Color", Color) = (0,0,0,1)
-		_Outline("Outline width", Range(0.0, 0.03)) = .005
+		_Outline("Outline width", Range(0.0, 0.06)) = .005
 		_MainTex("Base (RGB)", 2D) = "white" { }
-		_BumpMap("Bumpmap", 2D) = "bump" {}
+		_EmissionColor("EmissionColor", Color) = (1,1,1,1)
 	}
 
 		CGINCLUDE
@@ -51,11 +51,11 @@ Shader "Outlined/Silhouetted Bumped Diffuse" {
 				ZTest Always
 
 		// you can choose what kind of blending mode you want for the outline
-		Blend SrcAlpha OneMinusSrcAlpha // Normal
+		//Blend SrcAlpha OneMinusSrcAlpha // Normal
 		//Blend One One // Additive
 		//Blend One OneMinusDstColor // Soft Additive
 		//Blend DstColor Zero // Multiplicative
-		//Blend DstColor SrcColor // 2x Multiplicative
+		Blend DstColor SrcColor // 2x Multiplicative
 
 CGPROGRAM
 #pragma vertex vert
@@ -77,10 +77,10 @@ struct Input {
 sampler2D _MainTex;
 sampler2D _BumpMap;
 uniform float3 _Color;
+fixed4 _EmissionColor;
 void surf(Input IN, inout SurfaceOutput o) {
 	o.Albedo = tex2D(_MainTex, IN.uv_MainTex).rgb * _Color;
-	o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
-	o.Emission = o.Albedo;
+	o.Emission = _EmissionColor.rgb;
 }
 ENDCG
 
@@ -120,10 +120,11 @@ struct Input {
 sampler2D _MainTex;
 sampler2D _BumpMap;
 uniform float3 _Color;
+fixed4 _EmissionColor;
 void surf(Input IN, inout SurfaceOutput o) {
 	o.Albedo = tex2D(_MainTex, IN.uv_MainTex).rgb * _Color;
-	o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
-	
+	//o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
+
 }
 ENDCG
 

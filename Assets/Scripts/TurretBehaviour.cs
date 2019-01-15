@@ -48,7 +48,7 @@ public class TurretBehaviour : MonoBehaviour
             UpdateHealthBar();
             timerShoot += Time.deltaTime;
 
-            if (timerShoot > 0.5f)
+            if (timerShoot > 0.75f)
             {
                 SearchForEnemy();
                 if (objective != null)
