@@ -18,7 +18,7 @@ public class WaveManager : MonoBehaviour
     [Header("Environment & player variables")]
     public GameObject doorGameObject;
 
-    //Estos dos siguientes siempre tendran el mismo tamaño, dado que se trata de que 
+    //Estos tres siguientes siempre tendran el mismo tamaño, dado que se trata de que 
     //cada indice se corresponda.
     public GameObject[] DoorPositions;
     float[] doorCurrentLife;

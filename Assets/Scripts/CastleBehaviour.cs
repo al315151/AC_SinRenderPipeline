@@ -7,6 +7,8 @@ public class CastleBehaviour : MonoBehaviour
 {
 
     float castleLife = 2000f;
+    GameObject[] objectiveDoors;
+
 
     //Squad Management
 
@@ -29,9 +31,7 @@ public class CastleBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        squadsAssigned = new List<SquadBehaviour>();
-
-
+        squadsAssigned = new List<SquadBehaviour>();        
     }
 
     // Update is called once per frame
@@ -44,6 +44,10 @@ public class CastleBehaviour : MonoBehaviour
             WaveManager.currentInstance.player_Reference_GO.GetComponent<Camera>();
             CastleLife_Slider.maxValue = castleLife;
             CastleLife_Slider.value = castleLife;
+
+            FindClosestDoors();
+            print(name + " closest doors: " + objectiveDoors[0].name
+                  + " , " + objectiveDoors[1].name);
         }
                      
         if (WaveManager.currentInstance != null && WaveManager.currentInstance.gameStarted)
@@ -92,8 +96,7 @@ public class CastleBehaviour : MonoBehaviour
 
 
     }
-
-
+    
     void ChangeColorCastleLife()
     {
         castle_Canvas.gameObject.transform.LookAt(WaveManager.currentInstance.player_Reference_GO.transform.position);
@@ -111,7 +114,36 @@ public class CastleBehaviour : MonoBehaviour
        
     }
 
+    void FindClosestDoors()
+    {
+        objectiveDoors = new GameObject[2];
 
+        GameObject[] doors = WaveManager.currentInstance.DoorPositions;
+        float[] doorsDistance = new float[doors.Length];
+
+        for (int i = 0; i < doors.Length; i++)
+        {  doorsDistance[i] = Vector3.Distance(transform.position, doors[i].transform.position);    }
+
+        int minIndex = 0;
+        for (int i = 1; i < doors.Length; i++)
+        {  if (doorsDistance[i] < doorsDistance[minIndex])
+            {   minIndex = i;    }
+        }
+        objectiveDoors[0] = doors[minIndex];
+
+        int second = -1;
+        for (int i = 0; i < doors.Length; i++)
+        {  if (i != minIndex)
+            {
+                if (second == -1)
+                {   second = i;   }
+                else if (doorsDistance[i] < doorsDistance[second])
+                { second = i; }
+            }
+        }
+        objectiveDoors[1] = doors[second];
+
+    }
 
 
 
