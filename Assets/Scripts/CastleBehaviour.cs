@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class CastleBehaviour : MonoBehaviour
 {
 
-    float castleLife = 1000f;
+    float castleLife = 1250f;
     GameObject[] objectiveDoors;
     int[] indexDoors;
 
