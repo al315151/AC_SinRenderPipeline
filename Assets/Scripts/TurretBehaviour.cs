@@ -45,8 +45,7 @@ public class TurretBehaviour : MonoBehaviour
         }
 
         if(turretActivated)
-        {
-            
+        {            
             UpdateHealthBar();
             timerShoot += Time.deltaTime;
 
@@ -95,8 +94,7 @@ public class TurretBehaviour : MonoBehaviour
         //Por si acaso, para eitar cosas injustas haremos que desaparezca en 5 seg si no choca con nada.
         Destroy(proj, 5f);
     }
-
-
+    
     void SearchForEnemy()
     {
         /*

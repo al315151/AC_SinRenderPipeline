@@ -28,6 +28,8 @@ public class SquadBehaviour : MonoBehaviour
 
     public bool SquadDispatched = false;
 
+    public bool castleObjectiveOverride = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -154,12 +156,13 @@ public class SquadBehaviour : MonoBehaviour
     
     public void ChangeObjectiveToAllMembers(GameObject obj)
     {
-        for (int i = 0; i < squadMembers.Count; i++)
+        if (castleObjectiveOverride == false)
         {
-            squadMembers[i].GetComponent<EnemyBehaviour>().FollowOrders(obj);
+            for (int i = 0; i < squadMembers.Count; i++)
+            {
+                squadMembers[i].GetComponent<EnemyBehaviour>().FollowOrders(obj);
+            }
         }
-
-
     }
 
 

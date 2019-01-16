@@ -15,7 +15,7 @@ public class CastleBehaviour : MonoBehaviour
     //Squad Management
     [HideInInspector]
     public int numberOfSquadsAvailable;
-    float numberOfReserveSquads;
+    float numberOfReserveSquads = 0.0f;
     List<SquadBehaviour> squadsAssigned;
     float dispatchTimer = 0.0f;
 
@@ -70,7 +70,7 @@ public class CastleBehaviour : MonoBehaviour
             if (numberOfSquadsAvailable > 0)
             {
                 dispatchTimer += Time.deltaTime;
-                if (dispatchTimer > 1.0f)
+                if (dispatchTimer > 2.0f)
                 {
                     print("Dispatching new squad");
                     DispatchSquads();
@@ -107,13 +107,13 @@ public class CastleBehaviour : MonoBehaviour
             {
                 defenseTurrets[i].GetComponent<EnemyTurretBehaviour>().ShutOnTurret();
                 contactTimer += Time.deltaTime;
-                if (contactTimer > 8.0f )
+                
+                if (contactTimer > 10.0f )
                 {
-                    print(numberOfReserveSquads);
-                    if (numberOfReserveSquads > 0)
+                    if (squadsAssigned != null && squadsAssigned[0].castleObjectiveOverride == false)
                     {
-                        DispatchReserveSquad();
-                        print("Squad de reserva enviado");
+                        SquadDefenseMode();
+                        print("Modo Defensa Castillo activado");
                     }
                     contactTimer = 0.0f;
                 }
@@ -329,6 +329,17 @@ public class CastleBehaviour : MonoBehaviour
         numberOfReserveSquads--;
 
     }
+
+    void SquadDefenseMode()
+    {
+        for (int i = 0; i < squadsAssigned.Count; i++)
+        {
+            squadsAssigned[i].SetInitialObjective(WaveManager.currentInstance.player_Reference_GO);
+            squadsAssigned[i].ChangeObjectiveToAllMembers(WaveManager.currentInstance.player_Reference_GO);
+            squadsAssigned[i].castleObjectiveOverride = true;
+        }
+    }
+
 
 
 }

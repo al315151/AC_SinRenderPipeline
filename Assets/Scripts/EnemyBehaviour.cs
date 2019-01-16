@@ -38,7 +38,7 @@ public class EnemyBehaviour : MonoBehaviour
 
         if (launchProjectileZone == null) //SOMOS MELEE
         {
-            enemyNavAgent.speed = enemyNavAgent.speed * 2.5f;
+            enemyNavAgent.speed = enemyNavAgent.speed * 1.5f;
             currentEnemyLife = 50f;
             melee = true;
         }
@@ -64,7 +64,7 @@ public class EnemyBehaviour : MonoBehaviour
             if (melee == false)
             {
                 enemyAnimator.SetFloat("DistanceToTarget", distance);
-                if (distance < 30f)
+                if (distance < 40f)
                 {
                     targetInRange = true;
                     ShootingBehaviour();
@@ -80,7 +80,7 @@ public class EnemyBehaviour : MonoBehaviour
             else // Si soy Melee...
             {
                 //Valor antiguo == 6.5f
-                if (distance < 8f)
+                if (distance < 9f)
                 {
                     //KABOOM
                     WaveManager.currentInstance.ReduceLifeFromObjective(objective, this.gameObject);
