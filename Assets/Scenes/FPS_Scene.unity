@@ -256,10 +256,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: AvalonKnight_Ranged
       objectReference: {fileID: 0}
-    - target: {fileID: 89, guid: a1cbfeadd459d1c4fb22242c4f45432e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 144, guid: a1cbfeadd459d1c4fb22242c4f45432e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -400,12 +396,12 @@ PrefabInstance:
     - target: {fileID: 6165266113472680778, guid: 8860f45255236d14eaf1051904d34361,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 189367821644338201, guid: 8860f45255236d14eaf1051904d34361,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8860f45255236d14eaf1051904d34361, type: 3}
@@ -705,24 +701,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3694695117554603297, guid: 4d4f985ebd66ef94e98f363e1723f8e3,
-        type: 3}
-      propertyPath: currentObjective
-      value: 
-      objectReference: {fileID: 404673558}
-    - target: {fileID: 3694695117554603297, guid: 4d4f985ebd66ef94e98f363e1723f8e3,
-        type: 3}
-      propertyPath: initialObjective
-      value: 
-      objectReference: {fileID: 5549150330004900324}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d4f985ebd66ef94e98f363e1723f8e3, type: 3}
---- !u!1 &5549150330004900324 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5549150330004900324, guid: 48ea8f1d3d4eaa34a88678d84662d932,
-    type: 3}
-  m_PrefabInstance: {fileID: 1346335948240568516}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8204917400875789399
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -738,7 +718,7 @@ PrefabInstance:
     - target: {fileID: 8204917401071784099, guid: 55caff94af9744748939b964f43acbaa,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 60.25841
+      value: -7.187357
       objectReference: {fileID: 0}
     - target: {fileID: 8204917401071784099, guid: 55caff94af9744748939b964f43acbaa,
         type: 3}
@@ -748,7 +728,7 @@ PrefabInstance:
     - target: {fileID: 8204917401071784099, guid: 55caff94af9744748939b964f43acbaa,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 190.2638
+      value: 59.90852
       objectReference: {fileID: 0}
     - target: {fileID: 8204917401071784099, guid: 55caff94af9744748939b964f43acbaa,
         type: 3}
@@ -758,7 +738,7 @@ PrefabInstance:
     - target: {fileID: 8204917401071784099, guid: 55caff94af9744748939b964f43acbaa,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7071068
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8204917401071784099, guid: 55caff94af9744748939b964f43acbaa,
         type: 3}
@@ -768,7 +748,7 @@ PrefabInstance:
     - target: {fileID: 8204917401071784099, guid: 55caff94af9744748939b964f43acbaa,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8204917401071784099, guid: 55caff94af9744748939b964f43acbaa,
         type: 3}
@@ -783,7 +763,7 @@ PrefabInstance:
     - target: {fileID: 8204917401071784099, guid: 55caff94af9744748939b964f43acbaa,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 8204917401071784099, guid: 55caff94af9744748939b964f43acbaa,
         type: 3}
@@ -803,10 +783,6 @@ PrefabInstance:
     - target: {fileID: 106, guid: 71b573cc6ad1c8d4085d5e4529dcd472, type: 3}
       propertyPath: m_Name
       value: AvalonKnight_Melee
-      objectReference: {fileID: 0}
-    - target: {fileID: 106, guid: 71b573cc6ad1c8d4085d5e4529dcd472, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 140, guid: 71b573cc6ad1c8d4085d5e4529dcd472, type: 3}
       propertyPath: m_LocalPosition.x

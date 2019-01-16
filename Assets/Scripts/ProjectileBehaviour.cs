@@ -18,7 +18,7 @@ public class ProjectileBehaviour : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         //print("Entramos?");
-        if (other.gameObject != father && other.tag != tag) // No es el mismo objeto.
+        if (other.gameObject != father && other.tag != tag && other.tag != "IgnoreProjectile") // No es el mismo objeto.
         {
             if (other.tag != "Enemy" && type == ProjectileType.EnemyProjectile) // De enemigo a player o torreta.
             {

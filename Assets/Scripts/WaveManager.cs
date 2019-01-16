@@ -28,6 +28,7 @@ public class WaveManager : MonoBehaviour
     // Estos datos se reiniciarán cada ronda.
 
     public List<CastleBehaviour> castles;
+    public float squadsPerRound = 6;
 
 
     public GameObject player_Reference_GO;
@@ -80,6 +81,9 @@ public class WaveManager : MonoBehaviour
         MainMenu_GO.SetActive(true);
         turret_GO.SetActive(false);
         availableTurretsUIHolder.SetActive(false);
+
+        DoorDamageSuccessRatio = new float[4];
+
     }
 
     // Update is called once per frame
@@ -106,12 +110,14 @@ public class WaveManager : MonoBehaviour
                 if (castles[j] == null)
                 { castles.RemoveAt(j); }
             }
+
             //Si no quedan enemigos, pasamos a la siguiente ronda.
-            /**
-            if (currentWaveEnemies.Count == 0)
+            /**/
+            //if (currentWaveEnemies.Count == 0)
+            if (CheckAllSquadsDefeated())
             { ProceedToNextWave(); }
             //*/
-
+            /**
             //Spawneamos los enemigos.
             if (whileSpawn)
             {
@@ -129,7 +135,7 @@ public class WaveManager : MonoBehaviour
                     }
                 }
             }
-
+            //*/
             if (GameOverUIHolder.activeInHierarchy)
             {
                 float alpha = GameOverUIHolder.GetComponent<Image>().color.a + (Time.deltaTime / 1.5f);
@@ -165,8 +171,15 @@ public class WaveManager : MonoBehaviour
                 if (objective.name == DoorPositions[i].name)
                 {
                     if (sender.name.Contains("Missile"))
-                    { doorCurrentLife[i] -= 5f; }
-                    else { doorCurrentLife[i] -= 10f; }
+                    {
+                        doorCurrentLife[i] -= 5f;
+                        DoorDamageSuccessRatio[i] += 0.05f;
+                    }
+                    else
+                    {
+                        doorCurrentLife[i] -= 20f;
+                        DoorDamageSuccessRatio[i] += 0.1f;
+                    }
                 }
             }            
         }
@@ -212,9 +225,6 @@ public class WaveManager : MonoBehaviour
                 GameOverText.text = "You have completed the training!!!";
                 GameOverAnimation();
             }
-
-
-            //print("Se llama");
             
         }
         
@@ -230,7 +240,7 @@ public class WaveManager : MonoBehaviour
         activeEnemyIndex = 0;
         spawnInterval = 1 / (currentWave - (currentWave / 2));
         whileSpawn = true;
-
+        /**
         for (int i = 0; i < numberOfEnemies; i++)
         {
             int spawnerIndex = Random.Range(0, spawners.Length);
@@ -253,6 +263,9 @@ public class WaveManager : MonoBehaviour
                 //newEnemy.GetComponent<EnemyBehaviour>().SetNewTarget(doorGameObject);
             }
         }
+        //*/
+
+        ManageSquadsOntoCastles();
 
     }
 
@@ -338,7 +351,7 @@ public class WaveManager : MonoBehaviour
         currentWave = 0;
 
         //Comentado para hacer 
-        //ProceedToNextWave();
+        ProceedToNextWave();
 
         for (int i = 0; i < doorUIHolder.Length; i++)
         {
@@ -369,5 +382,49 @@ public class WaveManager : MonoBehaviour
         GO.transform.localScale = new Vector3(20f, 20f, 20f);
         Destroy(GO, 1.9f);
     }
+
+    public void ManageSquadsOntoCastles()
+    {
+        squadsPerRound = (currentWave) * 3f;
+        //print("Round: " + currentWave + " total squads: " + squadsPerRound);
+        
+       for (int i = 0; i < castles.Count; i++)
+       {
+           castles[i].numberOfSquadsAvailable = ((int)Mathf.Ceil(squadsPerRound)) / castles.Count;
+       }
+       if (squadsPerRound % castles.Count != 0)
+        {
+            for (int i = 0; i < castles.Count; i++)
+            {
+                castles[i].numberOfSquadsAvailable++;
+            }
+        }
+
+        for (int j = 0; j < castles.Count; j++)
+        {
+            //print(castles[j] +"number of squads assigned: " + castles[j].numberOfSquadsAvailable);
+            //Decirles a los castillos que creen sus propios squads, con las estadisticas.
+            castles[j].CreateSquadsFromStats();
+        }
+
+        //Resetear las stats de esta ronda. 
+        DoorDamageSuccessRatio = new float[4];
+
+
+    }
+
+    bool CheckAllSquadsDefeated()
+    {
+        
+        for (int i = 0; i < castles.Count; i++)
+        {
+            if (castles[i].allSquadsDefeated == false)
+            { return false; }
+        }
+
+        return true;
+    }
+
+
 
 }

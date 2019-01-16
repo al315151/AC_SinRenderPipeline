@@ -20,12 +20,13 @@ public class SquadBehaviour : MonoBehaviour
 
     GameObject[] enemyTypes;
 
-    Vector3 CenterOfSquad;
-
     public SquadType type;
 
     public GameObject currentObjective;
     public GameObject initialObjective;
+
+
+    public bool SquadDispatched = false;
 
     // Start is called before the first frame update
     void Start()
@@ -37,33 +38,37 @@ public class SquadBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (enemyTypes == null && WaveManager.currentInstance != null)
+        if (SquadDispatched)
         {
-            enemyTypes = WaveManager.currentInstance.enemyTypes;
-            PositionAndNumberAssignment(type);
-        }
-
-        //Check if anyone's dead. If it is, remove from the squad.
-        for (int i = 0; i < numberOfMembers; i++)
-        {
-            if (squadMembers[i] == null)
+            if (enemyTypes == null && WaveManager.currentInstance != null)
             {
-                print("Referencia de enemigo caido quitada de lista de squad");
-                squadMembers.RemoveAt(i);
-                numberOfMembers--;
+                enemyTypes = WaveManager.currentInstance.enemyTypes;
+                PositionAndNumberAssignment(type);
             }
+
+            //Check if anyone's dead. If it is, remove from the squad.
+            for (int i = 0; i < squadMembers.Count; i++)
+            {
+                if (squadMembers[i] == null)
+                {
+                   // print("Referencia de enemigo caido quitada de lista de squad");
+                    squadMembers.RemoveAt(i);
+                    numberOfMembers--;
+                }
+            }
+            if (squadMembers.Count == 0)
+            { Destroy(this.gameObject); }
         }
     }
 
     void PositionAndNumberAssignment(SquadType type)
     {
+        numberOfMembers = (WaveManager.currentInstance.currentWave) * 2;
+        squadMembers = new List<GameObject>(numberOfMembers);
         switch (type)
         {
             case SquadType.Suicidal:
-                {
-                    numberOfMembers = (WaveManager.currentInstance.currentWave + 1) * 4;
-                    squadMembers =  new List<GameObject>(numberOfMembers);
-         
+                {         
                     //Initial positions of squad.
                     for (int i = 0; i < numberOfMembers / 2; i++)
                     {
@@ -89,9 +94,7 @@ public class SquadBehaviour : MonoBehaviour
                 }
             case SquadType.Ranged:
                 {
-                    numberOfMembers = (WaveManager.currentInstance.currentWave + 1) * 4;
-                    squadMembers = new List<GameObject>(numberOfMembers);
-
+                    
                     //Initial positions of squad.
                     for (int i = 0; i < numberOfMembers / 2; i++)
                     {
@@ -116,9 +119,7 @@ public class SquadBehaviour : MonoBehaviour
 
             case SquadType.Balanced:
                 {
-                    numberOfMembers = (WaveManager.currentInstance.currentWave + 1) * 4;
-                    squadMembers = new List<GameObject>(numberOfMembers);
-
+                   
                     //Initial positions of squad.
                     for (int i = 0; i < numberOfMembers / 2; i++)
                     {
@@ -153,7 +154,7 @@ public class SquadBehaviour : MonoBehaviour
     
     public void ChangeObjectiveToAllMembers(GameObject obj)
     {
-        for (int i = 0; i < numberOfMembers; i++)
+        for (int i = 0; i < squadMembers.Count; i++)
         {
             squadMembers[i].GetComponent<EnemyBehaviour>().FollowOrders(obj);
         }
@@ -162,7 +163,10 @@ public class SquadBehaviour : MonoBehaviour
     }
 
 
-
+    public void SetInitialObjective(GameObject objective)
+    {
+        initialObjective = objective;
+    }
 
 
 

@@ -29,7 +29,7 @@ public class EnemyBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentEnemyLife = 100f;
+        currentEnemyLife = 80f;
         shootTimer = 0f;
         enemyAnimator = GetComponent<Animator>();
         enemyNavAgent = GetComponent<NavMeshAgent>();
@@ -39,7 +39,7 @@ public class EnemyBehaviour : MonoBehaviour
         if (launchProjectileZone == null) //SOMOS MELEE
         {
             enemyNavAgent.speed = enemyNavAgent.speed * 2.5f;
-            currentEnemyLife = 60f;
+            currentEnemyLife = 50f;
             melee = true;
         }
 
@@ -64,12 +64,10 @@ public class EnemyBehaviour : MonoBehaviour
             if (melee == false)
             {
                 enemyAnimator.SetFloat("DistanceToTarget", distance);
-                if (distance < 15f)
+                if (distance < 30f)
                 {
                     targetInRange = true;
                     ShootingBehaviour();
-
-                    
                     //enemyNavAgent.isStopped = true;
                 }
                 else
@@ -82,7 +80,7 @@ public class EnemyBehaviour : MonoBehaviour
             else // Si soy Melee...
             {
                 //Valor antiguo == 6.5f
-                if (distance < 5f)
+                if (distance < 8f)
                 {
                     //KABOOM
                     WaveManager.currentInstance.ReduceLifeFromObjective(objective, this.gameObject);
@@ -100,16 +98,17 @@ public class EnemyBehaviour : MonoBehaviour
 
     void ShootAtObjective()
     {
+        launchProjectileZone.transform.LookAt(objective.transform.position);
         GameObject proj = Instantiate(projectile, launchProjectileZone.transform.position,
                                       launchProjectileZone.transform.rotation);
 
         proj.name = gameObject.name + " Missile";
         proj.GetComponent<ProjectileBehaviour>().type = ProjectileType.EnemyProjectile;
-        Vector3 playerDirection = (objective.transform.position - transform.position);
-        playerDirection.y = 0f;
-        playerDirection.Normalize();
+        //Vector3 playerDirection = (objective.transform.position - transform.position);
+        //playerDirection.y = 0f;
+        //playerDirection.Normalize();
 
-        proj.GetComponent<Rigidbody>().AddForce(playerDirection * 1000f);
+        proj.GetComponent<Rigidbody>().AddForce(launchProjectileZone.transform.forward * 1000f);
         //Por si acaso, para eitar cosas injustas haremos que desaparezca en 5 seg si no choca con nada.
         Destroy(proj, 5f);
     }
@@ -119,7 +118,7 @@ public class EnemyBehaviour : MonoBehaviour
         shootTimer += Time.deltaTime;
         if (targetInRange)
         {
-            if (shootTimer > 1.0f)
+            if (shootTimer > 1.5f)
             {
                 ShootAtObjective();
                 shootTimer = 0.0f;
@@ -127,7 +126,7 @@ public class EnemyBehaviour : MonoBehaviour
         }
         else
         {
-            if (shootTimer > 2.0f)
+            if (shootTimer > 3.0f)
             {
                 ShootAtObjective();
                 shootTimer = 0.0f;
@@ -182,7 +181,7 @@ public class EnemyBehaviour : MonoBehaviour
         }
               
 
-        print("Nuevo objetivo: " + objective.name);
+        //print("Nuevo objetivo: " + objective.name);
     }
     
     public void FollowOrders(GameObject target)

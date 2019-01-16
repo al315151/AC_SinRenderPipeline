@@ -8,20 +8,26 @@ public class CastleBehaviour : MonoBehaviour
 
     float castleLife = 2000f;
     GameObject[] objectiveDoors;
+    int[] indexDoors;
 
+    public GameObject squad_GO;
 
     //Squad Management
-
+    [HideInInspector]
+    public int numberOfSquadsAvailable;
+    float numberOfReserveSquads;
     List<SquadBehaviour> squadsAssigned;
-    
-    //Self-Defense variables
-    float influenceArea = 125f;
-    float PatrolRadio;
+    float dispatchTimer = 0.0f;
+
+    public GameObject[] spawnerLocations;
+    [HideInInspector]
+    public bool allSquadsDefeated;
 
     [Header("Defense References")]
     public EnemyTurretBehaviour[] defenseTurrets;
 
-
+    float contactTimer = 0.0f;
+    float influenceArea = 125f;
 
     [Header("UI References")]
     public Canvas castle_Canvas;
@@ -31,7 +37,8 @@ public class CastleBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        squadsAssigned = new List<SquadBehaviour>();        
+        squadsAssigned = new List<SquadBehaviour>();
+        indexDoors = new int[2];
     }
 
     // Update is called once per frame
@@ -44,10 +51,9 @@ public class CastleBehaviour : MonoBehaviour
             WaveManager.currentInstance.player_Reference_GO.GetComponent<Camera>();
             CastleLife_Slider.maxValue = castleLife;
             CastleLife_Slider.value = castleLife;
-
             FindClosestDoors();
-            print(name + " closest doors: " + objectiveDoors[0].name
-                  + " , " + objectiveDoors[1].name);
+            // print(name + " closest doors: " + objectiveDoors[0].name
+            //       + " , " + objectiveDoors[1].name);
         }
                      
         if (WaveManager.currentInstance != null && WaveManager.currentInstance.gameStarted)
@@ -61,6 +67,20 @@ public class CastleBehaviour : MonoBehaviour
             if (defenseTurrets.Length != 0)
             { PlayerInDistance(); }
 
+            if (numberOfSquadsAvailable > 0)
+            {
+                dispatchTimer += Time.deltaTime;
+                if (dispatchTimer > 1.0f)
+                {
+                    print("Dispatching new squad");
+                    DispatchSquads();
+                    dispatchTimer = 0.0f;
+                }
+            }
+
+            if (squadsAssigned.Count == 0)
+            {  allSquadsDefeated = true;        }
+            else { allSquadsDefeated = false;   }
 
         }
 
@@ -86,6 +106,17 @@ public class CastleBehaviour : MonoBehaviour
             if (Vector3.Distance(player.transform.position, transform.position) < influenceArea)
             {
                 defenseTurrets[i].GetComponent<EnemyTurretBehaviour>().ShutOnTurret();
+                contactTimer += Time.deltaTime;
+                if (contactTimer > 8.0f )
+                {
+                    print(numberOfReserveSquads);
+                    if (numberOfReserveSquads > 0)
+                    {
+                        DispatchReserveSquad();
+                        print("Squad de reserva enviado");
+                    }
+                    contactTimer = 0.0f;
+                }
             }
             else
             {
@@ -130,6 +161,7 @@ public class CastleBehaviour : MonoBehaviour
             {   minIndex = i;    }
         }
         objectiveDoors[0] = doors[minIndex];
+        indexDoors[0] = minIndex;
 
         int second = -1;
         for (int i = 0; i < doors.Length; i++)
@@ -142,11 +174,161 @@ public class CastleBehaviour : MonoBehaviour
             }
         }
         objectiveDoors[1] = doors[second];
+        indexDoors[1] = second;
 
     }
 
+    public void CreateSquadsFromStats()
+    {
+        if (objectiveDoors == null)
+        { FindClosestDoors(); }
+        if (numberOfReserveSquads > 0)
+        { numberOfSquadsAvailable += (int)Mathf.Ceil(numberOfReserveSquads); }
+        //Cada 4 rondas, cada castillo tendrá una squad más de reserva por si es atacado.
+        numberOfReserveSquads = Mathf.Ceil(WaveManager.currentInstance.currentWave / 4);
+        float doorStat_1 = WaveManager.currentInstance.DoorDamageSuccessRatio[indexDoors[0]];
+        float doorStat_2 = WaveManager.currentInstance.DoorDamageSuccessRatio[indexDoors[1]];
 
+        //A más grande, más disparidad entre squads para cada puerta.
+        float squadRatioPerDoor = Mathf.Abs(doorStat_2 - doorStat_1) / 2;
 
+        int numberOfSquads_Door_1;
+        int numberOfSquads_Door_2;
+        if (doorStat_1 < doorStat_2)
+        {
+            numberOfSquads_Door_1 = (int)Mathf.Ceil(numberOfSquadsAvailable * (1 - squadRatioPerDoor));
+            numberOfSquads_Door_2 = (int)Mathf.Ceil(numberOfSquadsAvailable - numberOfSquads_Door_1);
+        }
+        else
+        {
+            numberOfSquads_Door_2 = (int)Mathf.Ceil(numberOfSquadsAvailable * (1 - squadRatioPerDoor));
+            numberOfSquads_Door_1 = (int)Mathf.Ceil(numberOfSquadsAvailable - numberOfSquads_Door_2);
+        }
+        //Si es menor a la ronda 7, habrá la mitad de squads de Ranged y la mitad de Suicidal.
+
+        //print(name + " squads assigned to door 1: " + numberOfSquads_Door_1);
+        //print(name + " squads assigned to door 2: " + numberOfSquads_Door_2);
+        
+        if (WaveManager.currentInstance.currentWave < 7)
+        {
+            //Aaahora creamos las squads.
+            for (int i = 0; i < numberOfSquads_Door_1; i++)
+            {
+                GameObject new_Squad_GO = Instantiate(squad_GO, transform);
+                new_Squad_GO.SetActive(true);
+                //SquadBehaviour newSquad = new_Squad_GO.GetComponent<SquadBehaviour>();
+                new_Squad_GO.GetComponent<SquadBehaviour>().SetInitialObjective(objectiveDoors[0]);
+                //new_Squad_GO.GetComponent<SquadBehaviour>().ChangeObjectiveToAllMembers(objectiveDoors[0]);
+                if (i < numberOfSquads_Door_1 / 2)
+                { new_Squad_GO.GetComponent<SquadBehaviour>().type = SquadType.Suicidal;        }
+                else
+                { new_Squad_GO.GetComponent<SquadBehaviour>().type = SquadType.Ranged;        }
+
+                if (i % 2 == 0)
+                { new_Squad_GO.transform.position = spawnerLocations[0].transform.position; }
+                else
+                { new_Squad_GO.transform.position = spawnerLocations[1].transform.position; }
+
+                new_Squad_GO.SetActive(false);
+                squadsAssigned.Add(new_Squad_GO.GetComponent<SquadBehaviour>());
+
+            }
+            for (int i = 0; i < numberOfSquads_Door_2; i++)
+            {
+                GameObject new_Squad_GO = Instantiate(squad_GO, transform);
+                new_Squad_GO.SetActive(true);
+                //SquadBehaviour newSquad = new_Squad_GO.GetComponent<SquadBehaviour>();
+                new_Squad_GO.GetComponent<SquadBehaviour>().SetInitialObjective(objectiveDoors[1]);
+                //new_Squad_GO.GetComponent<SquadBehaviour>().ChangeObjectiveToAllMembers(objectiveDoors[1]);
+                if (i < numberOfSquads_Door_2 / 2)
+                { new_Squad_GO.GetComponent<SquadBehaviour>().type = SquadType.Ranged; }
+                else
+                { new_Squad_GO.GetComponent<SquadBehaviour>().type = SquadType.Suicidal; }
+
+                if (i % 2 == 0)
+                { new_Squad_GO.transform.position = spawnerLocations[0].transform.position; }
+                else
+                { new_Squad_GO.transform.position = spawnerLocations[1].transform.position; }
+
+                new_Squad_GO.SetActive(false);
+                squadsAssigned.Add(new_Squad_GO.GetComponent<SquadBehaviour>());
+            }
+
+        }
+        else
+        {
+            for (int i = 0; i < numberOfSquads_Door_1; i++)
+            {
+                GameObject new_Squad_GO = Instantiate(squad_GO, transform);
+                new_Squad_GO.SetActive(true);
+                //SquadBehaviour newSquad = new_Squad_GO.GetComponent<SquadBehaviour>();
+                new_Squad_GO.GetComponent<SquadBehaviour>().SetInitialObjective(objectiveDoors[0]);
+               //new_Squad_GO.GetComponent<SquadBehaviour>().ChangeObjectiveToAllMembers(objectiveDoors[0]);
+                if (i < numberOfSquads_Door_1 / 2)
+                { new_Squad_GO.GetComponent<SquadBehaviour>().type = SquadType.Balanced; }
+                else
+                { new_Squad_GO.GetComponent<SquadBehaviour>().type = SquadType.Ranged; }
+
+                if (i % 2 == 0)
+                { new_Squad_GO.transform.position = spawnerLocations[0].transform.position; }
+                else
+                { new_Squad_GO.transform.position = spawnerLocations[1].transform.position; }
+
+                new_Squad_GO.SetActive(false);
+                squadsAssigned.Add(new_Squad_GO.GetComponent<SquadBehaviour>());
+            }
+
+            for (int i = 0; i < numberOfSquads_Door_2; i++)
+            {
+                GameObject new_Squad_GO = Instantiate(squad_GO, transform);
+                new_Squad_GO.SetActive(true);
+                //SquadBehaviour newSquad = new_Squad_GO.GetComponent<SquadBehaviour>();
+                new_Squad_GO.GetComponent<SquadBehaviour>().SetInitialObjective(objectiveDoors[1]);
+                //new_Squad_GO.GetComponent<SquadBehaviour>().ChangeObjectiveToAllMembers(objectiveDoors[1]);
+                if (i < numberOfSquads_Door_2 / 2)
+                { new_Squad_GO.GetComponent<SquadBehaviour>().type = SquadType.Balanced; }
+                else
+                { new_Squad_GO.GetComponent<SquadBehaviour>().type = SquadType.Ranged; }
+
+                if (i % 2 == 0)
+                { new_Squad_GO.transform.position = spawnerLocations[0].transform.position; }
+                else
+                { new_Squad_GO.transform.position = spawnerLocations[1].transform.position; }
+
+                new_Squad_GO.SetActive(false);
+                squadsAssigned.Add(new_Squad_GO.GetComponent<SquadBehaviour>());
+            }
+                                          
+        }
+
+    }
+
+    public void DispatchSquads()
+    {
+        for (int i = 0; i < squadsAssigned.Count; i++)
+        {
+            if (squadsAssigned[i].SquadDispatched == false)
+            {
+                squadsAssigned[i].SquadDispatched = true;
+                squadsAssigned[i].gameObject.SetActive(true);
+                break;
+            }
+        }
+    }
+
+    void DispatchReserveSquad()
+    {
+        SquadBehaviour newSquad = new SquadBehaviour();
+        newSquad.SetInitialObjective(WaveManager.currentInstance.player_Reference_GO);
+        newSquad.ChangeObjectiveToAllMembers(WaveManager.currentInstance.player_Reference_GO);
+        newSquad.type = SquadType.Balanced; 
+
+        newSquad.gameObject.transform.position = spawnerLocations[1].transform.position; 
+        newSquad.gameObject.SetActive(true);
+
+        numberOfReserveSquads--;
+
+    }
 
 
 }

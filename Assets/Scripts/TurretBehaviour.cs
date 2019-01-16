@@ -18,6 +18,8 @@ public class TurretBehaviour : MonoBehaviour
     
     public float turretLife;
 
+    public float influenceRadio;
+
     float timerShoot = 0.0f;
 
 
@@ -26,7 +28,7 @@ public class TurretBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        turretLife = 300f;
+        turretLife = 500f;
         
     }
 
@@ -48,9 +50,9 @@ public class TurretBehaviour : MonoBehaviour
             UpdateHealthBar();
             timerShoot += Time.deltaTime;
 
-            if (timerShoot > 0.75f)
+            if (timerShoot > 0.5f)
             {
-                SearchForEnemy();
+                //SearchForEnemy();
                 if (objective != null)
                 {
                     turretHead.transform.LookAt(objective.transform.position);
@@ -76,7 +78,7 @@ public class TurretBehaviour : MonoBehaviour
 
     void ShootAtObjective()
     {
-       launchProjectileZone.transform.LookAt(objectiveScript.transform.position);
+       launchProjectileZone.transform.LookAt(objective.transform.position);
        GameObject proj = Instantiate(projectile, launchProjectileZone.transform.position,
                                               launchProjectileZone.transform.rotation);
 
@@ -97,6 +99,7 @@ public class TurretBehaviour : MonoBehaviour
 
     void SearchForEnemy()
     {
+        /*
         List<GameObject> enemies = WaveManager.currentInstance.currentWaveEnemies;
         float minDistance = float.MaxValue;
 
@@ -107,13 +110,11 @@ public class TurretBehaviour : MonoBehaviour
                 float distance = Vector3.Distance(this.transform.position,
                                                   enemies[i].transform.position);
                 if (distance < minDistance)
-                {
-                    objective = enemies[i];
-                    objectiveScript = enemies[i].GetComponent<EnemyBehaviour>();
-                }
+                {   objective = enemies[i];        }
             }
         }
-
+        objectiveScript = objective.GetComponent<EnemyBehaviour>();
+        */
     }
 
     void UpdateHealthBar()
@@ -123,10 +124,10 @@ public class TurretBehaviour : MonoBehaviour
 
         //Update turret life slider color
         if(healthBarSlider.value < healthBarSlider.maxValue * 0.3)
-        {   healthBarFillImage.color = new Color(0.8f, 0.0f, 0.0f, 0.3f);       }
+        {   healthBarFillImage.color = new Color(0.8f, 0.0f, 0.0f, 0.6f);       }
         else if (healthBarSlider.value < healthBarSlider.maxValue * 0.65f)
-        {   healthBarFillImage.color = new Color(0.9f, 0.82f, 0.01f, 0.3f);     }
-        else { healthBarFillImage.color = new Color(0.0f, 0.8f, 0.0f, 0.3f); }
+        {   healthBarFillImage.color = new Color(0.9f, 0.82f, 0.01f, 0.6f);     }
+        else { healthBarFillImage.color = new Color(0.0f, 0.8f, 0.0f, 0.6f); }
     }
 
     public void ShutOffTurret()
@@ -138,5 +139,30 @@ public class TurretBehaviour : MonoBehaviour
     {
         turretActivated = true;
     }
-          
+
+    private void OnDrawGizmosSelected()
+    {
+        //Gizmos.color = Color.yellow;
+        //Gizmos.DrawWireSphere(transform.position, influenceRadio);
+    }
+
+    public void ChangeCurrentObjective(GameObject other)
+    {
+        if (objective == null)
+        {   objective = other;     }
+        else
+        {
+            if (Vector3.Distance(transform.position, objective.transform.position) >
+                Vector3.Distance(transform.position, other.transform.position))
+            {
+                objective = other;
+            }
+        }
+
+    }
+
+
+
+
+
 }
