@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class CastleBehaviour : MonoBehaviour
 {
 
-    float castleLife = 2000f;
+    float castleLife = 1000f;
     GameObject[] objectiveDoors;
     int[] indexDoors;
 
@@ -27,7 +27,7 @@ public class CastleBehaviour : MonoBehaviour
     public EnemyTurretBehaviour[] defenseTurrets;
 
     float contactTimer = 0.0f;
-    float influenceArea = 125f;
+    float influenceArea = 90f;
 
     [Header("UI References")]
     public Canvas castle_Canvas;
@@ -70,7 +70,7 @@ public class CastleBehaviour : MonoBehaviour
             if (numberOfSquadsAvailable > 0)
             {
                 dispatchTimer += Time.deltaTime;
-                if (dispatchTimer > 2.0f)
+                if (dispatchTimer > 8.0f)
                 {
                     print("Dispatching new squad");
                     DispatchSquads();

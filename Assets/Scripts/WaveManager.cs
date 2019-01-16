@@ -116,26 +116,7 @@ public class WaveManager : MonoBehaviour
             //if (currentWaveEnemies.Count == 0)
             if (CheckAllSquadsDefeated())
             { ProceedToNextWave(); }
-            //*/
-            /**
-            //Spawneamos los enemigos.
-            if (whileSpawn)
-            {
-                spawnTimer += Time.deltaTime;
-                if (spawnTimer > spawnInterval)
-                {
-                    //pr si el jugador elimina a alguien cuando todos no están aun spawneados.
-                    if (activeEnemyIndex >= currentWaveEnemies.Count)
-                    { whileSpawn = false; }
-                    else
-                    {
-                        currentWaveEnemies[activeEnemyIndex].SetActive(true);
-                        activeEnemyIndex++;
-                        spawnTimer = 0f;
-                    }
-                }
-            }
-            //*/
+           
             if (GameOverUIHolder.activeInHierarchy)
             {
                 float alpha = GameOverUIHolder.GetComponent<Image>().color.a + (Time.deltaTime / 1.5f);
@@ -232,38 +213,9 @@ public class WaveManager : MonoBehaviour
 
     public void ProceedToNextWave()
     {
-        availableTurrets += 2;
-        UpdateAvailableTurretsText();
-
+        availableTurrets += 3;
         currentWave++;
-        float numberOfEnemies = currentWave * 10;
-        activeEnemyIndex = 0;
-        spawnInterval = 1 / (currentWave - (currentWave / 2));
-        whileSpawn = true;
-        /**
-        for (int i = 0; i < numberOfEnemies; i++)
-        {
-            int spawnerIndex = Random.Range(0, spawners.Length);
-            if (i % 2 == 0)
-            {
-                GameObject newEnemy = Instantiate(enemyTypes[0], spawners[spawnerIndex].transform.position, 
-                                                                 Quaternion.identity, enemyPool);
-                newEnemy.name = "Melee_" + i / 2;
-                currentWaveEnemies.Add(newEnemy);
-                newEnemy.SetActive(false);
-                //newEnemy.GetComponent<EnemyBehaviour>().SetNewTarget(doorGameObject);
-            }
-            else
-            {
-                GameObject newEnemy = Instantiate(enemyTypes[1], spawners[spawnerIndex].transform.position,
-                                                                Quaternion.identity, enemyPool);
-                newEnemy.name = "Ranged_" + i / 2;
-                currentWaveEnemies.Add(newEnemy);
-                newEnemy.SetActive(false);
-                //newEnemy.GetComponent<EnemyBehaviour>().SetNewTarget(doorGameObject);
-            }
-        }
-        //*/
+        UpdateAvailableTurretsText();        
 
         ManageSquadsOntoCastles();
 
@@ -385,7 +337,7 @@ public class WaveManager : MonoBehaviour
 
     public void ManageSquadsOntoCastles()
     {
-        squadsPerRound = (currentWave) * 3f;
+        squadsPerRound = (currentWave + 1) * 1.5f;
         //print("Round: " + currentWave + " total squads: " + squadsPerRound);
         
        for (int i = 0; i < castles.Count; i++)
