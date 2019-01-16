@@ -27,7 +27,7 @@ public class WaveManager : MonoBehaviour
     //Si el usuario deja atacar mucho un punto, en la siguiente tanda se mandarán más squads a esa zona.
     // Estos datos se reiniciarán cada ronda.
 
-    public CastleBehaviour[] castles;
+    public List<CastleBehaviour> castles;
 
 
     public GameObject player_Reference_GO;
@@ -99,6 +99,12 @@ public class WaveManager : MonoBehaviour
                 { currentWaveEnemies.RemoveAt(i); }
                 else if (whileSpawn == false)
                 { currentWaveEnemies[i].SetActive(true); }
+            }
+            
+            for (int j = 0; j < castles.Count; j++)
+            {
+                if (castles[j] == null)
+                { castles.RemoveAt(j); }
             }
             //Si no quedan enemigos, pasamos a la siguiente ronda.
             /**
@@ -177,6 +183,18 @@ public class WaveManager : MonoBehaviour
             { objective.GetComponent<TurretBehaviour>().ReceiveDamage(5f); }
             else { objective.GetComponent<TurretBehaviour>().ReceiveDamage(10f); }
         }
+        if (objective.tag == "Castle" && sender.tag != "Enemy")
+        {
+            for (int i = 0; i < castles.Count; i++)
+            {
+                if (objective.name == castles[i].name)
+                {
+                    castles[i].GetComponent<CastleBehaviour>().ReceiveDamage(10f);
+                }
+            }
+        }
+        
+
         if (GameOverUIHolder.activeInHierarchy == false)
         {
             for (int i = 0; i < DoorPositions.Length; i++)
@@ -188,6 +206,14 @@ public class WaveManager : MonoBehaviour
                 }
             }
             
+            if (castles.Count == 0)
+            {
+                print("ALL CASTLES DEFEATED");
+                GameOverText.text = "You have completed the training!!!";
+                GameOverAnimation();
+            }
+
+
             //print("Se llama");
             
         }
@@ -337,5 +363,11 @@ public class WaveManager : MonoBehaviour
         Destroy(GO, 1.9f);
     }
 
+    public void CreateCastleParticles(Vector3 position)
+    {
+        GameObject GO = Instantiate(ParticleSystem_GO, position, Quaternion.identity);
+        GO.transform.localScale = new Vector3(20f, 20f, 20f);
+        Destroy(GO, 1.9f);
+    }
 
 }

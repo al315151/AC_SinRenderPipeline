@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class CustomFPSMovement : MonoBehaviour
 {
-    public float movementSpeed = 5f;
+    public float movementSpeed = 10f;
     float rotationSpeed = 2.5f;
 
     float groundDistance = 6f;
@@ -45,9 +45,9 @@ public class CustomFPSMovement : MonoBehaviour
             if (Input.GetKey(KeyCode.LeftShift))
             {
                 //El doble de lo normal.
-                movementSpeed = 10f;
+                movementSpeed = 20f;
             }
-            else { movementSpeed = 5f; }
+            else { movementSpeed = 7.5f; }
 
             PlayerMovement();
             PlayerRotation();
@@ -126,7 +126,7 @@ public class CustomFPSMovement : MonoBehaviour
         proj.GetComponent<ProjectileBehaviour>().type = ProjectileType.PlayerProjectile;
         proj.GetComponent<Rigidbody>().AddForce(transform.forward * 1500f);
         //Por si acaso, para eitar cosas injustas haremos que desaparezca en 4 seg si no choca con nada.
-        Destroy(proj, 4f);
+        Destroy(proj, 3f);
     }
 
     void ShootingBehaviour()

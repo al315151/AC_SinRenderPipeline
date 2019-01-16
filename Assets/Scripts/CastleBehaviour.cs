@@ -68,7 +68,9 @@ public class CastleBehaviour : MonoBehaviour
         castleLife -= damage;
         if (castleLife < 0.0f)
         {
+            WaveManager.currentInstance.CreateCastleParticles(transform.position);
             Destroy(this.gameObject);
+
         }
     }
 
@@ -99,13 +101,13 @@ public class CastleBehaviour : MonoBehaviour
         CastleLife_Slider.value = castleLife;
         if (castleLife < CastleLife_Slider.maxValue * 0.4f)
         { CastleLife_SliderFill_Image.color = 
-                new Color(1.0f, 0.0f, 0.0f, 0.5f); }
+                new Color(1.0f, 0.0f, 0.0f, 0.7f); }
         else if (castleLife < CastleLife_Slider.maxValue * 0.7f)
         { CastleLife_SliderFill_Image.color = 
-            new Color(1.0f, 0.92f, 0.016f, 0.5f);  }
+            new Color(1.0f, 0.92f, 0.016f, 0.7f);  }
         else
         { CastleLife_SliderFill_Image.color =
-                new Color(0.0f, 1.0f, 0.0f, 0.5f); }
+                new Color(0.0f, 1.0f, 0.0f, 0.7f); }
        
     }
 

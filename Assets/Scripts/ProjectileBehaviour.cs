@@ -30,7 +30,11 @@ public class ProjectileBehaviour : MonoBehaviour
                 WaveManager.currentInstance.ReduceLifeFromObjective(other.gameObject, this.gameObject);
                 Destroy(this.gameObject);
             }
-            
+            if (other.tag == "Castle" && type != ProjectileType.EnemyProjectile)
+            {
+                WaveManager.currentInstance.ReduceLifeFromObjective(other.gameObject, this.gameObject);
+                Destroy(this.gameObject);
+            }
         }
     }
 }
