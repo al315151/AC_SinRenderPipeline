@@ -21,6 +21,11 @@ public class EnemyBehaviour : MonoBehaviour
 
     bool melee = false;
 
+    //Squad Data
+    public SquadBehaviour mySquad;
+    float positionInSquad;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,7 +50,8 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (objective == null)
         {
-            SetNewTarget(WaveManager.currentInstance.doorGameObject);
+            FollowOrders(mySquad.initialObjective);
+            //SetNewTarget(WaveManager.currentInstance.doorGameObject);
         }
         else
         {
@@ -57,12 +63,13 @@ public class EnemyBehaviour : MonoBehaviour
 
             if (melee == false)
             {
-
                 enemyAnimator.SetFloat("DistanceToTarget", distance);
                 if (distance < 15f)
                 {
                     targetInRange = true;
                     ShootingBehaviour();
+
+                    
                     //enemyNavAgent.isStopped = true;
                 }
                 else
@@ -74,7 +81,8 @@ public class EnemyBehaviour : MonoBehaviour
             }
             else // Si soy Melee...
             {
-                if (distance < 6.5f)
+                //Valor antiguo == 6.5f
+                if (distance < 5f)
                 {
                     //KABOOM
                     WaveManager.currentInstance.ReduceLifeFromObjective(objective, this.gameObject);
@@ -106,14 +114,6 @@ public class EnemyBehaviour : MonoBehaviour
         Destroy(proj, 5f);
     }
     
-    bool ObjectiveInSight()
-    {
-        RaycastHit hit;
-        return Physics.Raycast(transform.position, transform.forward, out hit) &&
-            hit.transform.gameObject.name == objective.name;
-    }
-
-
     void ShootingBehaviour()
     {
         shootTimer += Time.deltaTime;
@@ -135,7 +135,6 @@ public class EnemyBehaviour : MonoBehaviour
         }
     }
 
-
     public void ReceiveDamage(float hit, GameObject sender)
     {
         currentEnemyLife -= hit;
@@ -149,14 +148,15 @@ public class EnemyBehaviour : MonoBehaviour
         }
         else
         {
-            SetNewTarget(sender);
+            //SetNewTarget(sender);
+            if (sender != objective)
+            { mySquad.ChangeObjectiveToAllMembers(sender); }
         }
 
     }
-
-
-    public void SetNewTarget(GameObject obj)
-    {
+    
+    void SetNewTarget(GameObject obj)
+    {       
         if (obj.tag == "Player")
         {
             enemyNavAgent.SetDestination(WaveManager.currentInstance.player_Reference_GO.transform.position);
@@ -172,7 +172,7 @@ public class EnemyBehaviour : MonoBehaviour
         {
             if (obj.GetComponent<ProjectileBehaviour>().type == ProjectileType.TurretProjectile)
             {
-                print("Torreta damaged");
+                //print("Torreta damaged");
                 if (obj.GetComponent<ProjectileBehaviour>().father != null)
                 {
                     enemyNavAgent.SetDestination(obj.GetComponent<ProjectileBehaviour>().father.transform.position);
@@ -180,10 +180,17 @@ public class EnemyBehaviour : MonoBehaviour
                 }
             }
         }
-
+              
 
         print("Nuevo objetivo: " + objective.name);
     }
+    
+    public void FollowOrders(GameObject target)
+    {
+        SetNewTarget(target);
+    }
+
+
 
 
 }

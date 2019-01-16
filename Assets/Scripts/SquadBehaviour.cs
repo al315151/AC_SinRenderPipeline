@@ -16,12 +16,16 @@ public enum SquadType
 public class SquadBehaviour : MonoBehaviour
 {
     int numberOfMembers;
-    GameObject[] memberPositions;
+    List<GameObject> squadMembers;
 
     GameObject[] enemyTypes;
 
+    Vector3 CenterOfSquad;
+
     public SquadType type;
 
+    public GameObject currentObjective;
+    public GameObject initialObjective;
 
     // Start is called before the first frame update
     void Start()
@@ -39,9 +43,16 @@ public class SquadBehaviour : MonoBehaviour
             PositionAndNumberAssignment(type);
         }
 
-
-
-
+        //Check if anyone's dead. If it is, remove from the squad.
+        for (int i = 0; i < numberOfMembers; i++)
+        {
+            if (squadMembers[i] == null)
+            {
+                print("Referencia de enemigo caido quitada de lista de squad");
+                squadMembers.RemoveAt(i);
+                numberOfMembers--;
+            }
+        }
     }
 
     void PositionAndNumberAssignment(SquadType type)
@@ -51,7 +62,8 @@ public class SquadBehaviour : MonoBehaviour
             case SquadType.Suicidal:
                 {
                     numberOfMembers = (WaveManager.currentInstance.currentWave + 1) * 4;
-                    memberPositions =  new GameObject[numberOfMembers];
+                    squadMembers =  new List<GameObject>(numberOfMembers);
+         
                     //Initial positions of squad.
                     for (int i = 0; i < numberOfMembers / 2; i++)
                     {
@@ -61,27 +73,100 @@ public class SquadBehaviour : MonoBehaviour
                             Vector3 memberInitialPosition = new Vector3(transform.position.x + (i * 2f),
                                                                         transform.position.y,
                                                                         transform.position.z + (j * 2f));
-                            memberPositions[i+j] = Instantiate(enemyTypes[1], memberInitialPosition, 
+                            GameObject recruit = Instantiate(enemyTypes[1], memberInitialPosition,
                                                                Quaternion.identity, transform);
-                            memberPositions[i + j].SetActive(true);
+                            recruit.name = "Member " + i + " of " + name;
+                            recruit.SetActive(true);
+                            recruit.GetComponent<EnemyBehaviour>().mySquad = this;
+                            squadMembers.Add(recruit);
 
 
                         }
                     }
-                    print("Squad created");
+                    print("Squad melee created");
+
+                    break;
+                }
+            case SquadType.Ranged:
+                {
+                    numberOfMembers = (WaveManager.currentInstance.currentWave + 1) * 4;
+                    squadMembers = new List<GameObject>(numberOfMembers);
+
+                    //Initial positions of squad.
+                    for (int i = 0; i < numberOfMembers / 2; i++)
+                    {
+                        for (int j = 0; j < numberOfMembers - (numberOfMembers / 2); j++)
+                        {
+                            //Ahora, el enemigo melee es el numero 1 en el array de enemyTypes.
+                            Vector3 memberInitialPosition = new Vector3(transform.position.x + (i * 2f),
+                                                                        transform.position.y,
+                                                                        transform.position.z + (j * 2f));
+                            GameObject recruit = Instantiate(enemyTypes[0], memberInitialPosition,
+                                                               Quaternion.identity, transform);
+                            recruit.name = "Member " + i + " of " + name;
+                            recruit.SetActive(true);
+                            recruit.GetComponent<EnemyBehaviour>().mySquad = this;
+                            squadMembers.Add(recruit);
+                        }
+                    }
+                    print("Squad ranged created");
 
                     break;
                 }
 
+            case SquadType.Balanced:
+                {
+                    numberOfMembers = (WaveManager.currentInstance.currentWave + 1) * 4;
+                    squadMembers = new List<GameObject>(numberOfMembers);
 
+                    //Initial positions of squad.
+                    for (int i = 0; i < numberOfMembers / 2; i++)
+                    {
+                        for (int j = 0; j < numberOfMembers - (numberOfMembers / 2); j++)
+                        {
+                            //Ahora, el enemigo melee es el numero 1 en el array de enemyTypes.
+                            Vector3 memberInitialPosition = new Vector3(transform.position.x + (i * 2f),
+                                                                        transform.position.y,
+                                                                        transform.position.z + (j * 2f));
 
+                            int enemyTypeIndex;
+                            if ((i+j) < numberOfMembers / 2)
+                            {   enemyTypeIndex = 0; }
+                            else
+                            {   enemyTypeIndex = 1; }
+                            GameObject recruit = Instantiate(enemyTypes[enemyTypeIndex], memberInitialPosition,
+                                                               Quaternion.identity, transform);
+                            recruit.name = "Member " + i + " of " + name;
+                            recruit.SetActive(true);
+                            recruit.GetComponent<EnemyBehaviour>().mySquad = this;
+                            squadMembers.Add(recruit);
+                        }
+                    }
+                    print("Squad balanced created");
 
+                    break;
+                }
+        }
+
+    }
+
+    
+    public void ChangeObjectiveToAllMembers(GameObject obj)
+    {
+        for (int i = 0; i < numberOfMembers; i++)
+        {
+            squadMembers[i].GetComponent<EnemyBehaviour>().FollowOrders(obj);
         }
 
 
-
-
     }
+
+
+
+
+
+
+
 
 
 }

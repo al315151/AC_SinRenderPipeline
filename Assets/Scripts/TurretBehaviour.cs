@@ -76,17 +76,20 @@ public class TurretBehaviour : MonoBehaviour
 
     void ShootAtObjective()
     {
-        GameObject proj = Instantiate(projectile, launchProjectileZone.transform.position,
+       launchProjectileZone.transform.LookAt(objectiveScript.transform.position);
+       GameObject proj = Instantiate(projectile, launchProjectileZone.transform.position,
                                               launchProjectileZone.transform.rotation);
 
         proj.name = gameObject.name + " Missile";
         proj.GetComponent<ProjectileBehaviour>().father = this.gameObject;
         proj.GetComponent<ProjectileBehaviour>().type = ProjectileType.TurretProjectile;
-        Vector3 playerDirection = (objectiveScript.transform.position - transform.position);
-        playerDirection.y = 0f;
-        playerDirection.Normalize();
+        //Vector3 playerDirection = (objectiveScript.transform.position - transform.position);
+        //playerDirection.y = 0f;
+        //playerDirection.Normalize();
 
-        proj.GetComponent<Rigidbody>().AddForce(playerDirection * 2000f);
+
+        //proj.GetComponent<Rigidbody>().AddForce(playerDirection * 2000f);
+        proj.GetComponent<Rigidbody>().AddForce(launchProjectileZone.transform.forward * 1500f);
         //Por si acaso, para eitar cosas injustas haremos que desaparezca en 5 seg si no choca con nada.
         Destroy(proj, 5f);
     }

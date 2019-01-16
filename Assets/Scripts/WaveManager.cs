@@ -21,6 +21,7 @@ public class WaveManager : MonoBehaviour
     //Estos dos siguientes siempre tendran el mismo tamaño, dado que se trata de que 
     //cada indice se corresponda.
     public GameObject[] DoorPositions;
+    float[] doorCurrentLife;
     public float[] DoorDamageSuccessRatio;
     //El success ratio aumentará conforme enemigos consigan atacar dicho punto. 
     //Si el usuario deja atacar mucho un punto, en la siguiente tanda se mandarán más squads a esa zona.
@@ -32,8 +33,8 @@ public class WaveManager : MonoBehaviour
     public GameObject player_Reference_GO;
     public GameObject turret_GO;
     public GameObject ParticleSystem_GO;
-    float doorLife = 300f;
-    float playerLife = 150f;
+    float doorLife = 400f;
+    float playerLife = 200f;
 
 
     [Header("Game variables")]
@@ -42,19 +43,19 @@ public class WaveManager : MonoBehaviour
     public GameObject[] spawners;
     public Transform enemyPool;
     public Transform playerBulletPool;
-
-
-
+       
     public int availableTurrets;
 
-    [Header("UI variables")]
-    public GameObject doorUIHolder;
-    public Slider doorUI;
-    public Image doorUIFill;
+    [Header("Health UI variables")]
+    public GameObject[] doorUIHolder;
+    public Slider[] doorUI;
+    public Image[] doorUIFill;
+
     public GameObject playerUIHolder;
     public Slider playerUI;
     public Image playerUIFill;
 
+    [Header("Other UI variables")]
     public GameObject currentWave_GO;
     public Text CurrentWaveText;
 
@@ -86,7 +87,7 @@ public class WaveManager : MonoBehaviour
     {
         if (gameStarted)
         {
-            if (playerUIHolder.gameObject.activeInHierarchy && doorUIHolder.gameObject.activeInHierarchy)
+            if (playerUIHolder.gameObject.activeInHierarchy)
             { UpdateUIProperties(); }
             if (currentWave_GO.activeInHierarchy)
             { CurrentWaveText.text = "Completed Waves: " + currentWave + " "; }
@@ -151,12 +152,17 @@ public class WaveManager : MonoBehaviour
         {
             objective.GetComponent<EnemyBehaviour>().ReceiveDamage(20f, sender);
         }
-        else if (objective.name == doorGameObject.name && (sender.tag == "Enemy"))
+        else if (objective.name.Contains("Door") && (sender.tag == "Enemy"))
         {
-            if (sender.name.Contains("Missile"))
-            { doorLife -= 5f; }
-            else { doorLife -= 10f; }
-            
+            for (int i = 0; i < DoorPositions.Length; i++)
+            {
+                if (objective.name == DoorPositions[i].name)
+                {
+                    if (sender.name.Contains("Missile"))
+                    { doorCurrentLife[i] -= 5f; }
+                    else { doorCurrentLife[i] -= 10f; }
+                }
+            }            
         }
         if (objective.tag == "MainCamera")
         {
@@ -171,10 +177,20 @@ public class WaveManager : MonoBehaviour
             { objective.GetComponent<TurretBehaviour>().ReceiveDamage(5f); }
             else { objective.GetComponent<TurretBehaviour>().ReceiveDamage(10f); }
         }
-        if ((doorLife <= 0.0f || playerLife <= 0.0f) && GameOverUIHolder.activeInHierarchy == false)
+        if (GameOverUIHolder.activeInHierarchy == false)
         {
+            for (int i = 0; i < DoorPositions.Length; i++)
+            {
+                if (doorCurrentLife[i] <= 0.0f || playerLife <= 0.0f)
+                {
+                    GameOverAnimation();
+                    break;
+                }
+            }
+            
             //print("Se llama");
-            GameOverAnimation(); }
+            
+        }
         
     }
 
@@ -216,28 +232,33 @@ public class WaveManager : MonoBehaviour
 
     public void SetUIProperties()
     {
-        doorUI.maxValue = doorLife;
-        doorUI.value = doorLife;
-        doorUIFill.color = Color.green;
+        doorCurrentLife = new float[4];
+
+        for (int i= 0; i < doorUIHolder.Length; i++)
+        {
+            doorUI[i].maxValue = doorLife;
+            doorUI[i].value = doorLife;
+            doorUIFill[i].color = Color.green;
+            doorCurrentLife[i] = doorLife;
+        }    
 
         playerUI.maxValue = playerLife;
         playerUI.value = playerLife;
         playerUIFill.color = Color.green;
-
     }
 
     void UpdateUIProperties()
     {
-        doorUI.value = doorLife;
-        if (doorLife / doorUI.maxValue > 0.7)
+        for (int i = 0; i < doorUIHolder.Length; i++)
         {
-            doorUIFill.color = Color.green;
+            doorUI[i].value = doorCurrentLife[i];
+            if (doorCurrentLife[i] / doorUI[i].maxValue > 0.7)
+            { doorUIFill[i].color = Color.green; }
+            else if (doorCurrentLife[i] / doorUI[i].maxValue > 0.3)
+            { doorUIFill[i].color = Color.yellow; }
+            else { doorUIFill[i].color = Color.red; }
         }
-        else if (doorLife / doorUI.maxValue > 0.3)
-        {
-            doorUIFill.color = Color.yellow;
-        }
-        else { doorUIFill.color = Color.red; }
+        
 
         playerUI.value = playerLife;
         if (playerLife / playerUI.maxValue > 0.7)
@@ -266,7 +287,11 @@ public class WaveManager : MonoBehaviour
 
     void GameOverAnimation()
     {
-        doorUIHolder.gameObject.SetActive(false);
+        for (int i = 0; i < doorUIHolder.Length; i++)
+        {
+            doorUIHolder[i].gameObject.SetActive(false);
+        }
+        
         playerUIHolder.gameObject.SetActive(false);
         availableTurretsUIHolder.SetActive(false);
         GameOverUIHolder.gameObject.SetActive(true);
@@ -289,7 +314,10 @@ public class WaveManager : MonoBehaviour
         //Comentado para hacer 
         //ProceedToNextWave();
 
-        doorUIHolder.SetActive(true);
+        for (int i = 0; i < doorUIHolder.Length; i++)
+        {
+            doorUIHolder[i].SetActive(true);
+        }       
         playerUIHolder.SetActive(true);
         SetUIProperties();
         GameOverUIHolder.gameObject.SetActive(false);
