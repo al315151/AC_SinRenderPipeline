@@ -2842,7 +2842,7 @@ MonoBehaviour:
   - {fileID: 4767613600848007106}
   squadsPerRound: 6
   player_Reference_GO: {fileID: 0}
-  turret_GO: {fileID: 42436807995106545, guid: 8860f45255236d14eaf1051904d34361, type: 3}
+  turret_GO: {fileID: 140, guid: 8860f45255236d14eaf1051904d34361, type: 3}
   ParticleSystem_GO: {fileID: 1121192042590650, guid: e1b08032bec16ba4eb1ae23cbd572664,
     type: 3}
   currentWave: 0

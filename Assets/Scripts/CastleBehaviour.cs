@@ -70,7 +70,7 @@ public class CastleBehaviour : MonoBehaviour
             if (numberOfSquadsAvailable > 0)
             {
                 dispatchTimer += Time.deltaTime;
-                if (dispatchTimer > 8.0f)
+                if (dispatchTimer > 4.0f)
                 {
                     print("Dispatching new squad");
                     DispatchSquads();
@@ -93,6 +93,7 @@ public class CastleBehaviour : MonoBehaviour
         if (castleLife < 0.0f)
         {
             WaveManager.currentInstance.CreateCastleParticles(transform.position);
+            SaveSquadsFromDestruction();
             Destroy(this.gameObject);
 
         }
@@ -340,6 +341,13 @@ public class CastleBehaviour : MonoBehaviour
         }
     }
 
+    void SaveSquadsFromDestruction()
+    {
+        for (int i = 0; i < squadsAssigned.Count; i++)
+        {
+            squadsAssigned[i].gameObject.transform.SetParent(transform.parent);
+        }
+    }
 
 
 }

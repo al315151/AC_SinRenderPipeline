@@ -114,7 +114,7 @@ public class WaveManager : MonoBehaviour
             //Si no quedan enemigos, pasamos a la siguiente ronda.
             /**/
             //if (currentWaveEnemies.Count == 0)
-            if (CheckAllSquadsDefeated())
+            if (CheckAllSquadsDefeated() && GameOverUIHolder.activeInHierarchy == false)
             { ProceedToNextWave(); }
            
             if (GameOverUIHolder.activeInHierarchy)
